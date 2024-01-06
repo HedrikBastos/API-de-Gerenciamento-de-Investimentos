@@ -19,14 +19,19 @@ class Investimento
     #[ORM\JoinColumn(nullable:false)]
     private Proprietario $proprietario;
 
-    #[ORM\Column]
-    private int $valorInicial;
+    public function __construct(
+        #[ORM\Column]
+        private int $valorInicial,
+        #[ORM\Column]
+        private DateTimeImmutable $criadoEm
+    ){
+        
+    }
 
     #[ORM\Column]
     private int $saldo;
 
-    #[ORM\Column]
-    private DateTimeImmutable $criadoEm;
+
 
     public function id(): int
     {
@@ -36,13 +41,6 @@ class Investimento
     public function valorInicial():int
     {
         return $this->valorInicial;
-    }
- 
-    public function setValorInicial(int $valorInicial): self
-    {
-        $this->valorInicial = $valorInicial;
-
-        return $this;
     }
 
     public function saldo(): int
@@ -62,10 +60,4 @@ class Investimento
         return $this->criadoEm;
     }
 
-    public function setCriadoEm(DateTimeImmutable $criadoEm): self
-    {
-        $this->criadoEm = $criadoEm;
-
-        return $this;
-    }
 }
