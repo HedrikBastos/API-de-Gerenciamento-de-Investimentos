@@ -20,5 +20,7 @@ class ProprietarioRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
-    } 
+    }
+
+ 
 }

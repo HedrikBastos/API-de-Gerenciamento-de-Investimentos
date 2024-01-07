@@ -21,4 +21,5 @@ class InvestimentoRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
 }

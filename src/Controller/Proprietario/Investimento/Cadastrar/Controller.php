@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Proprietario\Investimento;
+namespace App\Controller\Proprietario\Investimento\Cadastrar;
 
 use Symfony\Component\Routing\Attribute\Route;
 use App\DTO\Proprietario\CadastrarInvestimentoDTO;
@@ -8,17 +8,17 @@ use App\Service\Investimento\CadastrarInvestimentoService;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/proprietario/{proprietario}',name:'investimento', methods: ['POST'])]
+#[Route('/proprietario/investimento/{proprietarioId}',name:'investimento', methods: ['POST'])]
 class Controller extends AbstractController
 {
     public function __invoke(
         #[MapRequestPayload]
         CadastrarInvestimentoDTO $cadastrarInvestimentoDTO,
-        CadastrarInvestimentoService $cadastrarInvestimentoService
+        CadastrarInvestimentoService $cadastrarInvestimentoService,
+        int $proprietarioId
     )
     {
-        $cadastrarInvestimentoService->execute($cadastrarInvestimentoDTO);
-
+        $cadastrarInvestimentoService->execute($cadastrarInvestimentoDTO,$proprietarioId);
         return $this->json([
             'message' => 'Sucesso ao cadastrar Investimento'
         ]);

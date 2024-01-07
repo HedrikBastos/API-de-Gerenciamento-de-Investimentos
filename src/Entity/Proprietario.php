@@ -6,10 +6,11 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 #[ORM\Entity]
 #[ORM\Table]
-class Proprietario
+class Proprietario implements JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,14 +19,14 @@ class Proprietario
 
     #[ORM\Column]
     private DateTimeImmutable $criadoEm;
-    
-    #[ORM\OneToMany(mappedBy:'proprietario', targetEntity:Investimento::class, cascade:['persist'])]
+
+    #[ORM\OneToMany(mappedBy: 'proprietario', targetEntity: Investimento::class, cascade: ['persist'])]
     private Collection $investimentos;
 
     public function __construct(
-        #[ORM\Column(length:255)]
+        #[ORM\Column(length: 255)]
         private string $nome
-    ){
+    ) {
         $this->criadoEm = new \DateTimeImmutable();
         $this->investimentos = new ArrayCollection();
     }
@@ -56,4 +57,30 @@ class Proprietario
     {
         return $this->investimentos;
     }
-}
+
+    public function adicionarInvestimentos(Collection $investimentos): self
+    {
+        foreach ($investimentos as $investimento) { {
+                $this->investimentos->add($investimento);
+                $investimento->setProprietrio($this);
+            }
+        }
+        return $this;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return  [
+            'id' => $this->id(),
+            'nome' => $this->nome(),
+            'criadoEm' => $this->criadoEm(),
+            'investimentos' => $this->investimentos->map(function (Investimento $investimento){
+                return [
+                    'valorInicial' => $investimento->valorInicial(),
+                    'saldo' => $investimento->saldo()
+                ];                                                                                                          
+            })
+        ];
+            
+    }
+}                                   

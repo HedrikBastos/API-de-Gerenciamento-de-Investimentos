@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Controller\Proprietario\Buscar;
+
+use Symfony\Component\Routing\Annotation\Route;
+use App\Service\Proprietario\BuscarProprietarioService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+#[Route('/proprietario/{proprietarioId}', name: 'buscar_proprietario', methods: ['GET'])]
+class Controller extends AbstractController
+{
+    public function __invoke(
+        BuscarProprietarioService $buscarProprietarioService,
+        int $proprietarioId
+    ) {
+
+        $proprietario = $buscarProprietarioService->execute($proprietarioId);
+
+        return $this->json([
+            'proprietario' => $proprietario
+        ]);
+    }
+}

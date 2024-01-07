@@ -15,23 +15,21 @@ class Investimento
     #[ORM\Column]
     private int $id;
 
-    #[ManyToOne(inversedBy:'investimentos')]
-    #[ORM\JoinColumn(nullable:false)]
-    private Proprietario $proprietario;
+    #[ORM\Column(nullable:true)]                 
+    private ?int $saldo = null;
 
     public function __construct(
         #[ORM\Column]
         private int $valorInicial,
+
         #[ORM\Column]
-        private DateTimeImmutable $criadoEm
-    ){
-        
+        private DateTimeImmutable $criadoEm,
+
+        #[ManyToOne(inversedBy:'investimentos')]
+        #[ORM\JoinColumn(nullable:false)]
+        private Proprietario $proprietario
+    ){   
     }
-
-    #[ORM\Column]
-    private int $saldo;
-
-
 
     public function id(): int
     {
@@ -58,6 +56,13 @@ class Investimento
     public function criadoEm(): DateTimeImmutable
     {
         return $this->criadoEm;
+    }
+
+    public function setProprietario(Proprietario $proprietario): self
+    {
+        $this->proprietario = $proprietario;
+
+        return $this;
     }
 
 }
