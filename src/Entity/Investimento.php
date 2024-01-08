@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use Brick\Math\BigDecimal;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToOne;
+
 
 #[ORM\Entity]
 #[ORM\Table]
@@ -16,14 +18,14 @@ class Investimento
     private int $id;
 
     #[ORM\Column(nullable:true)]                 
-    private ?int $saldo = null;
+    private ?string $saldo = null;
 
     #[ORM\Column(nullable:true)]                 
     private ?\DateTime $atualizadoEm = null;
 
     public function __construct(
         #[ORM\Column]
-        private int $valorInicial,
+        private string $valorInicial,
 
         #[ORM\Column]
         private DateTimeImmutable $criadoEm,
@@ -40,17 +42,17 @@ class Investimento
         return $this->id;
     }
 
-    public function valorInicial():int
+    public function valorInicial(): string
     {
         return $this->valorInicial;
     }
 
-    public function saldo(): int
+    public function saldo(): string
     {
         return $this->saldo;
     }
 
-    public function setSaldo(int $saldo): self
+    public function setSaldo(BigDecimal $saldo): self
     {
         $this->saldo = $saldo;
 

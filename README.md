@@ -4,3 +4,4 @@ para subir o sistema você precisa ter o PHP, composer e criar o banco de dados 
 
 componente serializer
 
+componente brick/math 

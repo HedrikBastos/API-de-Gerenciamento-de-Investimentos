@@ -2,8 +2,10 @@
 
 namespace App\Service\Investimento;
 
+use Brick\Math\BigDecimal;
+use Brick\Math\RoundingMode;
+use Doctrine\DBAL\Types\DecimalType;
 use App\Repository\InvestimentoRepository;
-use DateTime;
 
 class AtualizaGanhoInvestimentoService
 {
@@ -20,11 +22,9 @@ class AtualizaGanhoInvestimentoService
 
         foreach ($investimentos as $investimento) {
             $atualizadoEm = $investimento->atualizadoEm();
-
             if ($atualizadoEm != null) {
-                $intervalo =  $this->calcularIntervaloMeses($dataAtual, $atualizadoEm);
-
-                if ($intervalo->m >=  30) {
+                $mesesAcumulados =  $this->calcularIntervaloMeses($dataAtual, $atualizadoEm);
+                if ($mesesAcumulados >= 1) {
                     $investimento->setAtualizadoEm($dataAtual);
                     $atualizaSaldoInvestimento = $this->calculaGanhoInvestimento($investimento->saldo());
                     $investimento->setSaldo($atualizaSaldoInvestimento);
@@ -34,28 +34,41 @@ class AtualizaGanhoInvestimentoService
 
             if ($atualizadoEm == null) {
                 $CriadoEm = $investimento->criadoEm();
-                $intervalo = $this->calcularIntervaloMeses($dataAtual, $CriadoEm);
-
-                for($i=1; $i<= $intervalo->m; $i++ ) {
-                    $atualizaSaldoInvestimento = $this->calculaGanhoInvestimento($investimento->saldo());
-                    $investimento->setSaldo($atualizaSaldoInvestimento); 
-                }
+                $mesesAcumulados = $this->calcularIntervaloMeses($dataAtual, $CriadoEm);
+                if ($mesesAcumulados)
+                    for ($i = 1; $i <= $mesesAcumulados; $i++) {
+                        $atualizaSaldoInvestimento = $this->calculaGanhoInvestimento($investimento->saldo());
+                        $investimento->setSaldo($atualizaSaldoInvestimento);
+                    }
                 $investimento->setAtualizadoEm($dataAtual);
                 $this->investimentoRepository->add($investimento, true);
             }
         }
     }
 
-    private function calcularIntervaloMeses($dataAtual, $atualizadoEm): mixed
+    private function calcularIntervaloMeses($dataAtual, $dataEntrada): mixed
     {
-        $intervalo = $dataAtual->diff($atualizadoEm);
+        $intervalo = $dataAtual->diff($dataEntrada);
 
-        return $intervalo;
+        if ($intervalo->y == 0) {
+            $mesesAcumulados = $intervalo->m;
+        }
+
+        if ($intervalo->y >= 1) {
+            $mesesAcumulados = $intervalo->y * 12;
+            $mesesAcumulados += $intervalo->m;
+        }
+
+
+        return $mesesAcumulados;
     }
 
-    private function calculaGanhoInvestimento($saldo): float
+    private function calculaGanhoInvestimento($saldo)
     {
-        $saldo += $saldo * 0.0052;
+        $saldo = BigDecimal::of($saldo);
+        $juros = BigDecimal::of(0.0052);
+        $saldo = $saldo->plus($saldo->multipliedBy($juros));
+        $saldo = $saldo->toScale(2, RoundingMode::UP);
 
         return $saldo;
     }

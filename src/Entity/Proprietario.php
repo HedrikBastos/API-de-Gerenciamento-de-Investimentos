@@ -77,7 +77,10 @@ class Proprietario implements JsonSerializable
             'investimentos' => $this->investimentos->map(function (Investimento $investimento){
                 return [
                     'id' => $investimento->id(),
+                    'criadoEm' => $investimento->criadoEm(),
                     'valorInicial' => $investimento->valorInicial(),
+                    'saldo' => $investimento->saldo(),
+                    'atualizadoEm' => $investimento->atualizadoEm()
                     
                     
                 ];                                                                                                          
