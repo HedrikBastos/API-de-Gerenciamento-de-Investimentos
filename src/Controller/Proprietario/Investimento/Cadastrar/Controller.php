@@ -19,6 +19,7 @@ class Controller extends AbstractController
     )
     {
         $cadastrarInvestimentoService->execute($cadastrarInvestimentoDTO,$proprietarioId);
+
         return $this->json([
             'message' => 'Sucesso ao cadastrar Investimento'
         ]);

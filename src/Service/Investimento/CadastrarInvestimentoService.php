@@ -18,22 +18,27 @@ class CadastrarInvestimentoService
 
     public function execute(CadastrarInvestimentoDTO $investimentoDTO, int $proprietarioId): bool
     {
-        
-        try {    
-            $proprietario = $this->proprietarioRepository->buscar($proprietarioId);                         
+        if ($investimentoDTO->valorInicial() <= 0) {
+            throw new \InvalidArgumentException("O valor do investimento não pode ser negativo.");
+        }
+
+        try {
+                
+            $proprietario = $this->proprietarioRepository->find($proprietarioId);                       
             $dateTime  =  new DateTimeImmutable($investimentoDTO->criadoEm());
+
             $this->investimentoRepository->add(
                 new Investimento(
                     $investimentoDTO->valorInicial(),
                     $dateTime,
-                    $proprietario
+                    $proprietario,
                 ),
                 true
             );
-
+            
             return true;
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            return false;
         }
     }
 }

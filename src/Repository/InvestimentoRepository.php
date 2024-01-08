@@ -15,11 +15,14 @@ class InvestimentoRepository extends ServiceEntityRepository
 
     public function add(Investimento $investimento, bool $flush = false): void
     {
-        $this->getEntityManager()->persist($investimento);
+        try {
+            $this->getEntityManager()->persist($investimento);
 
-        if ($flush) {
-            $this->getEntityManager()->flush();
+            if ($flush) {
+                $this->getEntityManager()->flush();
+            }
+        } catch (\Exception $e) {
+            dd($e->getMessage());
         }
     }
-
 }

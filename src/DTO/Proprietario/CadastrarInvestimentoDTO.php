@@ -33,4 +33,5 @@ class CadastrarInvestimentoDTO
 
         return $this;
     }
+
 }

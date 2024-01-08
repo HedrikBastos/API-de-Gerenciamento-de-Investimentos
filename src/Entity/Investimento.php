@@ -18,6 +18,9 @@ class Investimento
     #[ORM\Column(nullable:true)]                 
     private ?int $saldo = null;
 
+    #[ORM\Column(nullable:true)]                 
+    private ?\DateTime $atualizadoEm = null;
+
     public function __construct(
         #[ORM\Column]
         private int $valorInicial,
@@ -29,6 +32,7 @@ class Investimento
         #[ORM\JoinColumn(nullable:false)]
         private Proprietario $proprietario
     ){   
+        $this->saldo = $valorInicial;
     }
 
     public function id(): int
@@ -65,4 +69,15 @@ class Investimento
         return $this;
     }
 
+    public function atualizadoEm(): ? \DateTime
+    {
+        return $this->atualizadoEm;
+    }
+
+    public function setAtualizadoEm($atualizadoEm): self
+    {
+        $this->atualizadoEm = $atualizadoEm;
+
+        return $this;
+    }
 }
