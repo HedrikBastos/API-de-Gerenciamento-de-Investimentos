@@ -25,4 +25,14 @@ class InvestimentoRepository extends ServiceEntityRepository
             dd($e->getMessage());
         }
     }
+
+    public function remove($id, bool $flush = true): void
+    {
+        $this->getEntityManager()->remove($id);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+    
 }

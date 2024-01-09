@@ -1,16 +1,14 @@
 <?php
 
-namespace App\DTO\Proprietario;
-
-use DateTimeImmutable;
+namespace App\DTO\Investimento;
 
 class CadastrarInvestimentoDTO
 {
-    private int $valorInicial;
+    private string $valorInicial;
 
     private string $criadoEm;
      
-    public function valorInicial(): int
+    public function valorInicial(): string
     {
         return $this->valorInicial;
     }

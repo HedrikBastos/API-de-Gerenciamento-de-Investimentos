@@ -3,7 +3,7 @@
 namespace App\Controller\Proprietario\Investimento\Cadastrar;
 
 use Symfony\Component\Routing\Attribute\Route;
-use App\DTO\Proprietario\CadastrarInvestimentoDTO;
+use App\DTO\Investimento\CadastrarInvestimentoDTO;
 use App\Service\Investimento\CadastrarInvestimentoService;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

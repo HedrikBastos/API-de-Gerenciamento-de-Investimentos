@@ -6,7 +6,7 @@ use DateTimeImmutable;
 use App\Entity\Investimento;
 use App\Repository\InvestimentoRepository;
 use App\Repository\ProprietarioRepository;
-use App\DTO\Proprietario\CadastrarInvestimentoDTO;
+use App\DTO\Investimento\CadastrarInvestimentoDTO;
 
 class CadastrarInvestimentoService
 {

@@ -4,7 +4,6 @@ namespace App\Service\Investimento;
 
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
-use Doctrine\DBAL\Types\DecimalType;
 use App\Repository\InvestimentoRepository;
 
 class AtualizaGanhoInvestimentoService
@@ -22,11 +21,12 @@ class AtualizaGanhoInvestimentoService
 
         foreach ($investimentos as $investimento) {
             $atualizadoEm = $investimento->atualizadoEm();
+
             if ($atualizadoEm != null) {
                 $mesesAcumulados =  $this->calcularIntervaloMeses($dataAtual, $atualizadoEm);
                 if ($mesesAcumulados >= 1) {
                     $investimento->setAtualizadoEm($dataAtual);
-                    $atualizaSaldoInvestimento = $this->calculaGanhoInvestimento($investimento->saldo());
+                    $atualizaSaldoInvestimento = $this->calcularGanhosInvestimento($investimento->saldo());
                     $investimento->setSaldo($atualizaSaldoInvestimento);
                     $this->investimentoRepository->add($investimento, true);
                 }
@@ -37,7 +37,7 @@ class AtualizaGanhoInvestimentoService
                 $mesesAcumulados = $this->calcularIntervaloMeses($dataAtual, $CriadoEm);
                 if ($mesesAcumulados)
                     for ($i = 1; $i <= $mesesAcumulados; $i++) {
-                        $atualizaSaldoInvestimento = $this->calculaGanhoInvestimento($investimento->saldo());
+                        $atualizaSaldoInvestimento = $this->calcularGanhosInvestimento($investimento->saldo());
                         $investimento->setSaldo($atualizaSaldoInvestimento);
                     }
                 $investimento->setAtualizadoEm($dataAtual);
@@ -63,7 +63,7 @@ class AtualizaGanhoInvestimentoService
         return $mesesAcumulados;
     }
 
-    private function calculaGanhoInvestimento($saldo)
+    private function calcularGanhosInvestimento($saldo)
     {
         $saldo = BigDecimal::of($saldo);
         $juros = BigDecimal::of(0.0052);
