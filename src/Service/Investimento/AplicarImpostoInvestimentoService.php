@@ -7,7 +7,6 @@ use App\Entity\Investimento;
 use Brick\Math\RoundingMode;
 use DateInterval;
 
-
 class AplicarImpostoInvestimentoService
 {
 
@@ -39,14 +38,14 @@ class AplicarImpostoInvestimentoService
             return $this->aplicarImposto($investimento, 0.225);
         }
 
-        if ($tempoInvestido->y >= 1 && $tempoInvestido->y  <= 2) {
-            
+        if ($tempoInvestido->y >= 1 && $tempoInvestido->y <= 2) {
+
             return $this->aplicarImposto($investimento, 0.185);
-    
+
         }
-        
-            return $this->aplicarImposto($investimento, 0.15);
-            
+
+        return $this->aplicarImposto($investimento, 0.15);
+
     }
 
     private function aplicarImposto(Investimento $investimento, $imposto)

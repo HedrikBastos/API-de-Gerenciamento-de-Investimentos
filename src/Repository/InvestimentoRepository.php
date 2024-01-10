@@ -38,4 +38,15 @@ class InvestimentoRepository extends ServiceEntityRepository
             $this->flush();
         }
     }
+
+    public function buscarInvestimentosPaginados(int $pagina, int $itensPorPagina): array
+    {
+        $primeiroResultado = ($pagina - 1) * $itensPorPagina;
+
+        return $this->createQueryBuilder('i')
+            ->setMaxResults($itensPorPagina)
+            ->setFirstResult($primeiroResultado)
+            ->getQuery()
+            ->getResult();
+    }
 }
