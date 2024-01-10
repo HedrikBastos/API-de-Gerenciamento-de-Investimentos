@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use DateTimeImmutable;
+use App\Entity\Investimento;
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity]
 #[ORM\Table]
@@ -53,12 +54,17 @@ class Proprietario implements JsonSerializable
         return $this->criadoEm;
     }
 
+    public function investimento(int $id): ? Investimento
+    {
+        return $this->investimentos->findFirst(fn ( $key, $investimento) => $investimento->id() === $id);
+    }
+
     public function investimentos(): Collection
     {
         return $this->investimentos;
     }
 
-    public function adicionarInvestimentos(Collection $investimentos): self
+    public function adicionarInvestimento(Collection $investimentos): self
     {
         foreach ($investimentos as $investimento) { {
                 $this->investimentos->add($investimento);
@@ -68,7 +74,7 @@ class Proprietario implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return  [
             'id' => $this->id(),
@@ -80,9 +86,7 @@ class Proprietario implements JsonSerializable
                     'criadoEm' => $investimento->criadoEm(),
                     'valorInicial' => $investimento->valorInicial(),
                     'saldo' => $investimento->saldo(),
-                    'atualizadoEm' => $investimento->atualizadoEm()
-                    
-                    
+                    'atualizadoEm' => $investimento->atualizadoEm()                    
                 ];                                                                                                          
             })
         ];

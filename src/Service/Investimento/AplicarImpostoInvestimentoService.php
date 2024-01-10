@@ -5,26 +5,25 @@ namespace App\Service\Investimento;
 use Brick\Math\BigDecimal;
 use App\Entity\Investimento;
 use Brick\Math\RoundingMode;
-use App\Repository\InvestimentoRepository;
+use DateInterval;
+
 
 class AplicarImpostoInvestimentoService
 {
-    public function __construct(
-        private InvestimentoRepository $investimentoRepository
-    ) {
-    }
 
-    public function execute($id)
+    public function execute(Investimento $investimento)
     {
-        $investimento = $this->investimentoRepository->find($id);
+
         $tempoInvestido = $this->verificarTempoInvestimento($investimento->criadoEm());
-        $impostoAplicado = $this->verificarImpostoInvestimento($investimento,$tempoInvestido);
 
-        
+        $saldoLiquido = $this->verificarImpostoInvestimento($investimento, $tempoInvestido);
+
+        return $saldoLiquido;
     }
 
-    private function verificarTempoInvestimento($criadoEm)
+    private function verificarTempoInvestimento($criadoEm): DateInterval
     {
+
         $dataAtual = new \DateTime();
 
         $tempoInvestido = $dataAtual->diff($criadoEm);
@@ -32,17 +31,34 @@ class AplicarImpostoInvestimentoService
         return $tempoInvestido;
     }
 
-    private function verificarImpostoInvestimento(Investimento $investimento, $tempoInvestido )
+    private function verificarImpostoInvestimento(Investimento $investimento, $tempoInvestido): string
     {
-        if($tempoInvestido->y < 1){
-            $lucro = $investimento->saldo() - $investimento->valorInicial();
-            $lucro = BigDecimal::of($lucro);
-            $imposto = BigDecimal::of(0.225);
-            $aplicarImposto = $lucro->plus($lucro->multipliedBy($imposto));
-            $impostoAplicado = $aplicarImposto->toScale(2,RoundingMode::UP);
 
-            return $impostoAplicado;
+        if ($tempoInvestido->y < 1) {
+
+            return $this->aplicarImposto($investimento, 0.225);
         }
 
+        if ($tempoInvestido->y >= 1 && $tempoInvestido->y  <= 2) {
+            
+            return $this->aplicarImposto($investimento, 0.185);
+    
+        }
+        
+            return $this->aplicarImposto($investimento, 0.15);
+            
+    }
+
+    private function aplicarImposto(Investimento $investimento, $imposto)
+    {
+        $lucro = $investimento->saldo() - $investimento->valorInicial();
+        $lucro = BigDecimal::of($lucro);
+        $imposto = BigDecimal::of($imposto);
+        $aplicarImposto = $lucro->minus($lucro->multipliedBy($imposto));
+        $impostoAplicado = $aplicarImposto->toScale(2, RoundingMode::UP);
+        $investimento->setSaldo($impostoAplicado);
+        $saldoLiquido = $investimento->valorInicial() + $investimento->saldo();
+
+        return $saldoLiquido;
     }
 }

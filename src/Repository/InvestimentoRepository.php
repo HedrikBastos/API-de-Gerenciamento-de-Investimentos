@@ -13,17 +13,21 @@ class InvestimentoRepository extends ServiceEntityRepository
         parent::__construct($managerRegistry, Investimento::class);
     }
 
-    public function add(Investimento $investimento, bool $flush = false): void
+    public function add(Investimento $investimento, bool $flush = true): Investimento
     {
-        try {
-            $this->getEntityManager()->persist($investimento);
 
-            if ($flush) {
-                $this->getEntityManager()->flush();
-            }
-        } catch (\Exception $e) {
-            dd($e->getMessage());
+        $this->getEntityManager()->persist($investimento);
+
+        if ($flush) {
+            $this->flush();
         }
+
+        return $investimento;
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
     }
 
     public function remove($id, bool $flush = true): void
@@ -31,8 +35,7 @@ class InvestimentoRepository extends ServiceEntityRepository
         $this->getEntityManager()->remove($id);
 
         if ($flush) {
-            $this->getEntityManager()->flush();
+            $this->flush();
         }
     }
-    
 }

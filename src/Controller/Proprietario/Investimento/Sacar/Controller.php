@@ -2,25 +2,23 @@
 
 namespace App\Controller\Proprietario\Investimento\Sacar;
 
-use App\DTO\Investimento\SacarInvestimentoDTO;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Service\Investimento\SacarInvestimentoService;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 
-#[Route('/proprietario/investimento/sacar/{proprietarioId}',name:'investimento', methods: ['DELETE'])]
-class Controller  extends AbstractController
+#[Route('/proprietario/{proprietarioId}/investimento/{investimentoId}/sacar', name: 'investimento_sacar', methods: ['GET'])]
+class Controller extends AbstractController
 {
     public function __invoke(
-        #[MapRequestPayload]
-        SacarInvestimentoDTO $sacarInvestimentoDTO,
+        int $proprietarioId,
+        int $investimentoId,
         SacarInvestimentoService $sacarInvestimentoService,
-    )
-    {
-        $sacarInvestimentoService->execute($sacarInvestimentoDTO);
+    ): Response {
+        $executaSacaInvestimentoService = $sacarInvestimentoService->execute($proprietarioId, $investimentoId);
 
         return $this->json([
-           
+            'SaldoInvestimento' => $executaSacaInvestimentoService
         ]);
     }
 }

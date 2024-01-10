@@ -2,25 +2,27 @@
 
 namespace App\Service\Investimento;
 
-use App\DTO\Investimento\SacarInvestimentoDTO;
-use App\Repository\InvestimentoRepository;
+use App\Repository\ProprietarioRepository;
 
 class SacarInvestimentoService
 {
     public function __construct(
-        private InvestimentoRepository $investimentoRepository
-        
-    ){   
+        private ProprietarioRepository $proprietarioRepository,
+        private AplicarImpostoInvestimentoService $aplicarImpostoImvestimentoService
+
+    ) {
     }
 
-    public function execute(SacarInvestimentoDTO $sacarInvestimentoDTO): bool
-        {
-            try{
-               $investimento = $this->investimentoRepository->find($sacarInvestimentoDTO->id());
-                
-                $this->investimentoRepository->remove($sacarInvestimentoDTO->id(), true);
-            }catch (\Exception $e){
-                return false;
-            }
-        } 
+    public function execute(int $proprietarioId, int $investimentoId): string
+    {
+        try {
+            $proprietario = $this->proprietarioRepository->find($proprietarioId);
+            $investimento = $proprietario->investimento($investimentoId);                                           
+            $valorLiquido =  $this->aplicarImpostoImvestimentoService->execute($investimento);
+
+            return $valorLiquido;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 }

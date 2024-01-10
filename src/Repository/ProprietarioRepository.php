@@ -13,12 +13,19 @@ class ProprietarioRepository extends ServiceEntityRepository
         parent::__construct($manegerRegistry, Proprietario::class);
     }
 
-    public function add(Proprietario $proprietario, bool $flush = false): void
+    public function add(Proprietario $proprietario, bool $flush = true): Proprietario
     {
         $this->getEntityManager()->persist($proprietario);
 
         if ($flush) {
-            $this->getEntityManager()->flush();
+            $this->flush();
         }
+        
+        return $proprietario;
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
     }
 }

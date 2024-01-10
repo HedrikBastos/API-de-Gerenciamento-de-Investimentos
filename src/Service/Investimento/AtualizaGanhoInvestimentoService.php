@@ -13,40 +13,42 @@ class AtualizaGanhoInvestimentoService
     ) {
     }
 
-    public function execute(): void
+    public function execute(\Datetime $dataAtual): void
     {
-        $dataAtual = new \DateTime();
-
         $investimentos =  $this->investimentoRepository->findAll();
 
         foreach ($investimentos as $investimento) {
             $atualizadoEm = $investimento->atualizadoEm();
 
-            if ($atualizadoEm != null) {
+            if ($atualizadoEm !== null) {
                 $mesesAcumulados =  $this->calcularIntervaloMeses($dataAtual, $atualizadoEm);
+
                 if ($mesesAcumulados >= 1) {
                     $investimento->setAtualizadoEm($dataAtual);
                     $atualizaSaldoInvestimento = $this->calcularGanhosInvestimento($investimento->saldo());
                     $investimento->setSaldo($atualizaSaldoInvestimento);
-                    $this->investimentoRepository->add($investimento, true);
+                    $this->investimentoRepository->add($investimento, false);
                 }
+
+                continue;
             }
 
-            if ($atualizadoEm == null) {
-                $CriadoEm = $investimento->criadoEm();
-                $mesesAcumulados = $this->calcularIntervaloMeses($dataAtual, $CriadoEm);
-                if ($mesesAcumulados)
-                    for ($i = 1; $i <= $mesesAcumulados; $i++) {
-                        $atualizaSaldoInvestimento = $this->calcularGanhosInvestimento($investimento->saldo());
-                        $investimento->setSaldo($atualizaSaldoInvestimento);
-                    }
-                $investimento->setAtualizadoEm($dataAtual);
-                $this->investimentoRepository->add($investimento, true);
-            }
+            $criadoEm = $investimento->criadoEm();
+            $mesesAcumulados = $this->calcularIntervaloMeses($dataAtual, $criadoEm);
+
+            if ($mesesAcumulados)
+                for ($i = 1; $i <= $mesesAcumulados; $i++) {
+                    $atualizaSaldoInvestimento = $this->calcularGanhosInvestimento($investimento->saldo());
+                    $investimento->setSaldo($atualizaSaldoInvestimento);
+                }
+            $investimento->setAtualizadoEm($dataAtual);
+            $this->investimentoRepository->add($investimento, false);
         }
+
+        $this->investimentoRepository->flush();
     }
 
-    private function calcularIntervaloMeses($dataAtual, $dataEntrada): mixed
+    private function calcularIntervaloMeses($dataAtual, $dataEntrada): int
     {
         $intervalo = $dataAtual->diff($dataEntrada);
 
@@ -58,7 +60,6 @@ class AtualizaGanhoInvestimentoService
             $mesesAcumulados = $intervalo->y * 12;
             $mesesAcumulados += $intervalo->m;
         }
-
 
         return $mesesAcumulados;
     }
