@@ -82,7 +82,7 @@ Componente Brick/Math:
 | | |  |
 | `criadoEm`      | `DateTime` | Formato: 2024-01-01 00:00:00 |
 
-### Sacar de um Investimento
+### Sacar um Investimento
 
 ```http
   GET /proprietario/{proprietarioId}/investimento/{investimentoId}/sacar
